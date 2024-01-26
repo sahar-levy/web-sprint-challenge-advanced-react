@@ -32,7 +32,7 @@ export default function AppFunctional(props) {
     // You can use the `getXY` helper above to obtain the coordinates, and then `getXYMessage`
     // returns the fully constructed string.
     const { x, y } = getXY();
-    setMessage(`Coordinates (${x}, ${y})`);
+    return `Coordinates (${x}, ${y})`;
   }
 
   function reset() {
@@ -52,39 +52,48 @@ export default function AppFunctional(props) {
     // moving L or R changes the column, so add or subtract 1
     // check if index is valid: must be within 0-8 range inclusive (note: moving 'right' from the rightmost column should not place the 'B' in the leftmost column of the next row)
 
-    // declare a new index variable to store the potential next position of the 'B' character on the grid, based on the direction given.
-    let newIndex;
-
     // calculating the next index once the B has moved
     switch (direction) {
       case 'up':
-        newIndex = index - 3;
-        break;
+        if (index < 3) {
+          setMessage("You can't go up");
+          setSteps(steps)
+          return index;
+        } else {
+          setMessage('');
+          return index - 3;
+        }
       case 'down':
-        newIndex = index + 3;
-        break;
+        if (index > 5) {
+          setMessage("You can't go down");
+          setSteps(steps)
+          return index;
+        } else {
+          setMessage('');
+          return index + 3;
+        }
       case 'left':
-        newIndex = index - 1;
-        break;
+        if (index % 3 === 0) {
+          setMessage("You can't go left");
+          setSteps(steps)
+          return index;
+        } else {
+          setMessage('');
+          return index - 1;
+        }
       case 'right':
-        newIndex = index + 1;
-        break;
+        if (index % 3 === 2) {
+          setMessage("You can't go right");
+          setSteps(steps)
+          return index;
+        } else {
+          setMessage('');
+          return index + 1;
+        }
       default:
+        setMessage('');
         return index; // If invalid direction, return current index
     }
-
-    // check that the new index is valid (range 0-8 inclusive)
-    // performed after the switch statment bc it relies on the value of newIndex
-    if (newIndex < 0 || newIndex > 8){
-      return index;
-    }
-
-    // Check for edge cases (moving from one edge to another)
-    if ((index === 2 && direction === 'right') || (index === 3 && direction === 'left') || (index === 5 && direction === 'right') || (index === 6 && direction === 'left')) {
-      return index; // If moving from one edge to another, return current index
-    }
-
-    return newIndex; // Otherwise, return new index
 
   }
 
@@ -135,7 +144,7 @@ export default function AppFunctional(props) {
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
-        <h3 id="coordinates">{message}</h3>
+        <h3 id="coordinates">{getXYMessage()}</h3>
         <h3 id="steps">You moved {steps} times</h3>
       </div>
       <div id="grid">
@@ -148,7 +157,7 @@ export default function AppFunctional(props) {
         }
       </div>
       <div className="info">
-        <h3 id="message"></h3>
+        <h3 id="message">{message}</h3>
       </div>
       <div id="keypad">
         <button id="left" onClick={move}>LEFT</button>
