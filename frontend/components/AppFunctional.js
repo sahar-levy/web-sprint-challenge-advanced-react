@@ -57,7 +57,7 @@ export default function AppFunctional(props) {
     // calculating the next index once the B has moved
     switch (direction) {
       case 'up':
-        newIndex = index + 3;
+        newIndex = index - 3;
         break;
       case 'down':
         newIndex = index + 3;
@@ -74,7 +74,7 @@ export default function AppFunctional(props) {
 
     // check that the new index is valid (range 0-8 inclusive)
     // performed after the switch statment bc it relies on the value of newIndex
-    if (newIndex > 0 || newIndex < 8){
+    if (newIndex < 0 || newIndex > 8){
       return index;
     }
 
@@ -88,18 +88,30 @@ export default function AppFunctional(props) {
   }
 
   function move(evt) {
-    // This event handler can use the helper above to obtain a new index for the "B",
-    // and change any states accordingly.
+    // This event handler can use the helper above to obtain a new index for the "B", and change any states accordingly.
 
     // Get the direction from the id of the clicked button (JSX)
     const direction = evt.target.id;
 
     // calculate the next index
-    const newIndex = getNextindex(direction);
+    const newIndex = getNextIndex(direction);
+
+    // update the index state
+    setIndex(newIndex);
+
+    // increment the steps state
+    setSteps(steps + 1);
+
+    // update the coordinates message
+    getXYMessage();
   }
 
   function onChange(evt) {
     // You will need this to update the value of the input.
+
+    // get the current value of the input field
+    const newEmail = evt.target.value;
+    setEmail(newEmail);
   }
 
   function onSubmit(evt) {
@@ -109,8 +121,8 @@ export default function AppFunctional(props) {
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
-        <h3 id="coordinates">Coordinate (2,2)</h3>
-        <h3 id="steps">You moved 0 times</h3>
+        <h3 id="coordinates">{message}</h3>
+        <h3 id="steps">You moved {steps} times</h3>
       </div>
       <div id="grid">
         {
@@ -125,14 +137,14 @@ export default function AppFunctional(props) {
         <h3 id="message"></h3>
       </div>
       <div id="keypad">
-        <button id="left">LEFT</button>
-        <button id="up">UP</button>
-        <button id="right">RIGHT</button>
-        <button id="down">DOWN</button>
-        <button id="reset">reset</button>
+        <button id="left" onClick={move}>LEFT</button>
+        <button id="up" onClick={move}>UP</button>
+        <button id="right" onClick={move}>RIGHT</button>
+        <button id="down" onClick={move}>DOWN</button>
+        <button id="reset" onClick={reset}>reset</button>
       </div>
       <form>
-        <input id="email" type="email" placeholder="type email"></input>
+        <input onChange={onChange} id="email" type="email" placeholder="type email"></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
