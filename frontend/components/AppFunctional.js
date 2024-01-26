@@ -1,4 +1,4 @@
-import React from 'react'
+import React, {useState} from 'react'
 
 // Suggested initial states
 const initialMessage = ''
@@ -7,12 +7,49 @@ const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
 export default function AppFunctional(props) {
-  // THE FOLLOWING HELPERS ARE JUST RECOMMENDATIONS.
-  // You can delete them and build your own logic from scratch.
+  const [message, setMessage] = useState(initialMessage);
+  const [email, setEmail] = useState(initialEmail);
+  const [steps, setSteps] = useState(initialSteps);
+  const [index, setIndex] = useState(initialIndex);
 
-  function getXY() {
-    // It it not necessary to have a state to track the coordinates.
-    // It's enough to know what index the "B" is at, to be able to calculate them.
+
+  function getXY(index) {
+    // The getXY helper function is suggested but not necessary. It's designed to calculate the coordinates based on the current index.
+    // The idea is to derive the X and Y coordinates from the index where "B" is located.
+
+    // The calculation uses modulo (%) to wrap around the X coordinate when it reaches the grid width (creating 3x3), and division by the grid width (3) to get the Y coordinate.
+    // Note: The +1 is added to both x and y to convert the 0-based index to a 1-based coordinate system.
+    let x = index % 3 + 1;
+    let y = Math.floor(index / 3) + 1;
+
+    return { x, y };
+
+
+    // Instead of explicitly writing return { x: x, y: y };, you can use the shorthand syntax { x, y }.
+
+    //  x  y
+    // (1, 1) (2, 1) (3, 1)     0, 1, 2,
+    // (1, 2) (2, 2) (3, 2)     3, 4, 5,
+    // (1, 3) (2, 3) (3, 3)     6, 7, 8
+    
+    // idx --> coordinate 
+
+    // % operand --> odd numbers have a remainder of 1
+
+    /*
+      [0] --> (1,1) --> x % 3 + 1 = 1   y / 3 + 1 = 1
+      [1] --> (2,1) --> x % 3 + 1 = 2   y / 3 = 2 
+      [2] --> (3,1) --> x % 3 + 1 = 3   y % 3 = 
+      [3] --> (1,2) --> x % 3 + 1 = 4   y % 3 = 
+      [4] --> (2,2) --> x % 3 + 1 = 5   y % 3 = 
+      [5] --> (3,2) --> x % 3 + 1 = 6   y % 3 = 
+      [6] --> (1,3) --> x % 3 + 1 = 7   y % 3 = 
+      [7] --> (2,3) --> x % 3 + 1 = 8   y % 3 = 
+      [8] --> (3,3) --> x % 3 + 1 = 9   y % 3 = 
+    */
+
+    // PATTERN --> index coordinates to x which needs to be increased by 1 starting from first idx [0] + 1 = 1 
+
   }
 
   function getXYMessage() {
@@ -23,6 +60,10 @@ export default function AppFunctional(props) {
 
   function reset() {
     // Use this helper to reset all states to their initial values.
+    useState(initialMessage);
+    useState(initialEmail);
+    useState(initialSteps);
+    useState(initialIndex);
   }
 
   function getNextIndex(direction) {
