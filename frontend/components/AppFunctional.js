@@ -1,4 +1,5 @@
 import React, {useState} from 'react'
+import axios from 'axios'
 
 // Suggested initial states
 const initialMessage = ''
@@ -116,6 +117,19 @@ export default function AppFunctional(props) {
 
   function onSubmit(evt) {
     // Use a POST request to send a payload to the server.
+    evt.preventDefault();
+
+    const { x, y } = getXY();
+    console.log(x, y, steps, email)
+
+    axios.post('http://localhost:9000/api/result', {x, y, steps, email})
+    .then(res => {
+      console.log(res)
+      setMessage(res.data.message);
+    })
+    .catch(err => {
+      setMessage(err.response.data.message);
+    });
   }
 
   return (
@@ -127,8 +141,8 @@ export default function AppFunctional(props) {
       <div id="grid">
         {
           [0, 1, 2, 3, 4, 5, 6, 7, 8].map(idx => (
-            <div key={idx} className={`square${idx === 4 ? ' active' : ''}`}>
-              {idx === 4 ? 'B' : null}
+            <div key={idx} className={`square${idx === index ? ' active' : ''}`}>
+              {idx === index ? 'B' : null}
             </div>
           ))
         }
@@ -143,7 +157,7 @@ export default function AppFunctional(props) {
         <button id="down" onClick={move}>DOWN</button>
         <button id="reset" onClick={reset}>reset</button>
       </div>
-      <form>
+      <form onSubmit={onSubmit}>
         <input onChange={onChange} id="email" type="email" placeholder="type email"></input>
         <input id="submit" type="submit"></input>
       </form>
