@@ -1,6 +1,9 @@
 import React, {useState} from 'react'
 import axios from 'axios'
 
+
+const URL = 'http://localhost:9000/api/result';
+
 // Suggested initial states
 const initialMessage = ''
 const initialEmail = ''
@@ -57,7 +60,6 @@ export default function AppFunctional(props) {
       case 'up':
         if (index < 3) {
           setMessage("You can't go up");
-          setSteps(steps)
           return index;
         } else {
           setMessage('');
@@ -66,7 +68,6 @@ export default function AppFunctional(props) {
       case 'down':
         if (index > 5) {
           setMessage("You can't go down");
-          setSteps(steps)
           return index;
         } else {
           setMessage('');
@@ -75,7 +76,6 @@ export default function AppFunctional(props) {
       case 'left':
         if (index % 3 === 0) {
           setMessage("You can't go left");
-          setSteps(steps)
           return index;
         } else {
           setMessage('');
@@ -84,7 +84,6 @@ export default function AppFunctional(props) {
       case 'right':
         if (index % 3 === 2) {
           setMessage("You can't go right");
-          setSteps(steps)
           return index;
         } else {
           setMessage('');
@@ -106,22 +105,18 @@ export default function AppFunctional(props) {
     // calculate the next index
     const newIndex = getNextIndex(direction);
 
-    // update the index state
-    setIndex(newIndex);
+    // Only update the index and increment steps if a valid move was made by B
+    if (newIndex !== index) {
+      setIndex(newIndex);
+      setSteps(prevSteps => prevSteps + 1);
+    }
 
-    // increment the steps state
-    setSteps(steps + 1);
-
-    // update the coordinates message
     getXYMessage();
   }
 
   function onChange(evt) {
     // You will need this to update the value of the input.
-
-    // get the current value of the input field
-    const newEmail = evt.target.value;
-    setEmail(newEmail);
+    setEmail(evt.target.value);
   }
 
   function onSubmit(evt) {
@@ -129,23 +124,24 @@ export default function AppFunctional(props) {
     evt.preventDefault();
 
     const { x, y } = getXY();
-    console.log(x, y, steps, email)
 
     axios.post('http://localhost:9000/api/result', {x, y, steps, email})
     .then(res => {
-      console.log(res)
+      // console.log(res)
       setMessage(res.data.message);
+      setEmail(initialEmail);
     })
     .catch(err => {
       setMessage(err.response.data.message);
-    });
+    })
+
   }
 
   return (
     <div id="wrapper" className={props.className}>
       <div className="info">
         <h3 id="coordinates">{getXYMessage()}</h3>
-        <h3 id="steps">You moved {steps} times</h3>
+        <h3 id="steps">You moved {steps} {steps === 1 ? 'time' : 'times'}</h3>
       </div>
       <div id="grid">
         {
