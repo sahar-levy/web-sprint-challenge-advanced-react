@@ -5,8 +5,8 @@ import axios from 'axios'
 const URL = 'http://localhost:9000/api/result';
 
 // Suggested initial states
-const initialMessage = ''
-const initialEmail = ''
+const initialMessage = ""
+const initialEmail = ""
 const initialSteps = 0
 const initialIndex = 4 // the index the "B" is at
 
@@ -105,18 +105,21 @@ export default function AppFunctional(props) {
     // calculate the next index
     const newIndex = getNextIndex(direction);
 
-    // Only update the index and increment steps if a valid move was made by B
+    // Check if the newIndex is different from the current index. 
+    // If newIndex is not equal to index, it means a valid move was made (i.e., "B" didn't try to move off the grid).
     if (newIndex !== index) {
       setIndex(newIndex);
       setSteps(prevSteps => prevSteps + 1);
     }
 
+    // updates the coordinates message
     getXYMessage();
   }
 
   function onChange(evt) {
     // You will need this to update the value of the input.
-    setEmail(evt.target.value);
+    const {value} = evt.target
+    setEmail(value);
   }
 
   function onSubmit(evt) {
@@ -124,12 +127,12 @@ export default function AppFunctional(props) {
     evt.preventDefault();
 
     const { x, y } = getXY();
-
-    axios.post('http://localhost:9000/api/result', {x, y, steps, email})
+    const payload = {x, y, steps, email}
+    axios.post(URL, payload)
     .then(res => {
-      // console.log(res)
+      console.log(res.data.message)
       setMessage(res.data.message);
-      setEmail(initialEmail);
+      setEmail("")
     })
     .catch(err => {
       setMessage(err.response.data.message);
@@ -163,7 +166,7 @@ export default function AppFunctional(props) {
         <button id="reset" onClick={reset}>reset</button>
       </div>
       <form onSubmit={onSubmit}>
-        <input onChange={onChange} id="email" type="email" placeholder="type email"></input>
+        <input onChange={onChange} id="email" type="email" placeholder="type email" value={email}></input>
         <input id="submit" type="submit"></input>
       </form>
     </div>
